@@ -2,7 +2,7 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
-*$py.class
+*$py.classG
 
 # C extensions
 *.so
@@ -58,3 +58,6 @@ docs/_build/
 # PyBuilder
 target/
 
+#Project
+.vscode/
+*.pkl
