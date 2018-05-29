@@ -28,21 +28,22 @@ def summarize():
     model = request.args.get('model', 'media')
     if model == 'media':
         summarizer = cov_summarizer
+        
     else:
         summarizer = basic_cov_summarizer
 
-    word_count = int(request.args.get('maxWordCount', 50))        
+    word_count = int(request.args.get('maxWordCount', 50))
     summarizer.decoder.max_num_words = word_count
 
     corpus = SummarizationCorpus()
     cluster = Cluster()
 
-    jdata = request.json    
+    jdata = request.json
     for jdoc in jdata['documents']:
-        
+
         document = Document()
         title = jdoc['instances'][0]['title']
-        title = title.replace('\n' , ' ')        
+        title = title.replace('\n' , ' ')
         sentence = Sentence(title)
         sentence.id = jdoc['id']
         setattr(sentence, 'doc_src_id', jdoc['id'])
@@ -51,7 +52,7 @@ def summarize():
             setattr(token, 'lemma', word.lower())
             sentence.tokens.append(token)
         document.title.append(sentence)
-                        
+
         text = jdoc['instances'][0]['body']
         for line in nltk.sent_tokenize(text.replace('\n' , ' ')):
             sentence = Sentence(line)
@@ -64,9 +65,9 @@ def summarize():
 
         cluster.documents.append(document)
     corpus.clusters.append(cluster)
-    corpus.compute_tfidf()    
+    corpus.compute_tfidf()
 
-    summary = summarizer.summarize(cluster)       
+    summary = summarizer.summarize(cluster)
 
     # template = {
     #     "highlights": [
@@ -87,7 +88,7 @@ def summarize():
     #         }
     #     ]
     #     }
-    
+
     # summary is a Document()
     resp = {'highlights' : []}
     for sentence in summary.body:
@@ -108,9 +109,9 @@ def summarize():
             }
         highlight['highlight'] = sentence.text
         highlight['language'] = request.args.get('language', 'en')
-        highlight['sourceDocuments'][0]['id'] = sentence['doc_src_id']
+        highlight['sourceDocuments'][0]['id'] = sentence.doc_src_id
         resp['highlights'].append(highlight)
-    
+
     return jsonify(resp), 200
 
 if __name__ == '__main__':
@@ -126,10 +127,10 @@ if __name__ == '__main__':
 
     # Summarizer
     cov_summarizer = CoverageExtractiveSummarizer(vector_space, model=model, n_jobs=1)
-    basic_cov_summarizer = BasicCoverageExtractiveSummarizer(vector_space, n_jobs=1)
+    basic_cov_summarizer = BasicCoverageExtractiveSummarizer(vector_space, n_jobs=1).summarizer
 
     http_server = HTTPServer(WSGIContainer(app))
     http_server.listen(5000)
     IOLoop.current().start()
 
-    #app.run(host='0.0.0.0', port= 5000)    
+    #app.run(host='0.0.0.0', port= 5000)
