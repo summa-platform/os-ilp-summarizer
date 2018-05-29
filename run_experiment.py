@@ -12,7 +12,7 @@ PICKLE_DATASET = False
 
 if not os.path.exists('DUC2003.pkl'):
     trainset = SummarizationCorpus(n_jobs=NUM_JOBS)
-    trainset.read_corpus('/home/ppb/Data/summarization/datasets/DUC2003/', max_folders=1000)
+    trainset.read_corpus('/home/ppb/Data/summarization/datasets/DUC2003/', max_folders=10)
     trainset.compute_tfidf()
     summarizer = OracleSummarizer(trainset.vector_space, n_jobs=NUM_JOBS)
     train_oracles = summarizer.create_oracles(trainset.clusters)
@@ -77,7 +77,7 @@ print(tabulate(results, headers=[
 
 if not os.path.exists('DUC2004.pkl'):
     devset = SummarizationCorpus(n_jobs=NUM_JOBS)
-    devset.read_corpus('/home/ppb/Data/summarization/datasets/DUC2004/', max_folders=100)
+    devset.read_corpus('/home/ppb/Data/summarization/datasets/DUC2004/', max_folders=10)
     devset.compute_tfidf()
     summarizer = OracleSummarizer(trainset.vector_space, n_jobs=NUM_JOBS)
     dev_oracles = summarizer.create_oracles(devset.clusters)
@@ -252,7 +252,7 @@ print(tabulate(results, headers=[
 
 if not os.path.exists('DUC2003.pkl'):
     corpus = SummarizationCorpus(n_jobs=NUM_JOBS)
-    corpus.read_corpus('/home/ppb/Data/summarization/datasets/DUC2003/', max_folders=-1)
+    corpus.read_corpus('/home/ppb/Data/summarization/datasets/DUC2003/', max_folders=10)
     print('read_corpus')
     corpus.compute_tfidf()
     print('compute_tf_idf')
