@@ -1,3 +1,0 @@
-ad3
-nltk
-lpsolve55
